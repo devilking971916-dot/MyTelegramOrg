@@ -20,6 +20,7 @@
 import logging
 import os
 
+from flask import Flask, request
 from telegram import ParseMode
 from telegram.ext import (
     Updater,
@@ -256,22 +257,14 @@ def main():
     # Start the Bot
     if WEBHOOK:
         updater.start_webhook(
-            listen="0.0.0.0",
-            port=Config.PORT,
-            url_path=Config.TG_BOT_TOKEN
-        )
-        # https://t.me/MarieOT/22915
-        updater.bot.set_webhook(url=Config.URL + Config.TG_BOT_TOKEN)
+    listen="0.0.0.0",
+    port=Config.PORT,
+    url_path=Config.TG_BOT_TOKEN
+)
 
-        app.run(host="0.0.0.0", port=PORT)
-    
-    else:
-        updater.start_polling()
+updater.bot.set_webhook(url=Config.URL + Config.TG_BOT_TOKEN)
 
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+updater.idle()
 
 
 if __name__ == "__main__":
