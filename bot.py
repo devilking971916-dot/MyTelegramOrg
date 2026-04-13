@@ -215,53 +215,37 @@ def error(update, context):
 
 
 def main():
-    """ Initial Entry Point """
-    # Create the Updater and pass it your bot's token.
-    # Make sure to set use_context=True to use the new context based callbacks
-    # Post version 12 this will no longer be necessary
     updater = Updater(Config.TG_BOT_TOKEN, use_context=True)
+    dp = updater.dispatcher
 
-    # Get the dispatcher to register handlers
-    tg_bot_dis_patcher = updater.dispatcher
-
-    # Add conversation handler with the states
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
-
         states={
-            INPUT_PHONE_NUMBER: [MessageHandler(
-                Filters.text | Filters.contact,
-                input_phone_number
-            )],
-
-            INPUT_TG_CODE: [MessageHandler(Filters.text, input_tg_code)]
+            INPUT_PHONE_NUMBER: [
+                MessageHandler(Filters.text | Filters.contact, input_phone_number)
+            ],
+            INPUT_TG_CODE: [
+                MessageHandler(Filters.text, input_tg_code)
+            ]
         },
-
-        fallbacks=[CommandHandler('start', start)]
+        fallbacks=[CommandHandler("start", start)]
     )
 
-    tg_bot_dis_patcher.add_handler(conv_handler)
+    dp.add_handler(conv_handler)
+    dp.add_error_handler(error)
 
-    # log all errors
-    tg_bot_dis_patcher.add_error_handler(error)
-
-    # Start the Bot
     if WEBHOOK:
-    updater.start_webhook(
-        listen="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000)),
-        url_path=Config.TG_BOT_TOKEN
-    )
+        updater.start_webhook(
+            listen="0.0.0.0",
+            port=int(os.environ.get("PORT", 5000)),
+            url_path=Config.TG_BOT_TOKEN
+        )
 
-    updater.bot.set_webhook(
-        url=Config.URL + Config.TG_BOT_TOKEN
-    )
-else:
-    updater.start_polling()
+        updater.bot.set_webhook(
+            url=Config.URL + Config.TG_BOT_TOKEN
+        )
 
-updater.idle()
+    else:
+        updater.start_polling()
 
-
-if __name__ == "__main__":
-    main()
-    
+    updater.idle()
