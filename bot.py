@@ -234,18 +234,18 @@ def main():
     dp.add_error_handler(error)
 
     if WEBHOOK:
-    PORT = int(os.environ.get("PORT", 5000))
+        PORT = int(os.environ.get("PORT", 5000))
 
-    updater.start_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-    )
+        updater.start_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+        )
 
-    updater.bot.set_webhook(
-        url=f"{Config.URL}/{Config.TG_BOT_TOKEN}"
-    )
-else:
-    updater.start_polling()
+        updater.bot.set_webhook(
+            url=f"{Config.URL}/{Config.TG_BOT_TOKEN}"
+        )
+    else:
+        updater.start_polling()
 
     updater.idle()
 
